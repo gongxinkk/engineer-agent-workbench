@@ -151,7 +151,7 @@ function Header({
         <button className="mobile-menu icon-button" onClick={onOpenList} aria-label="打开工单列表">
           <ListFilter size={18} />
         </button>
-        <div className="brand-mark"><Activity size={19} /></div>
+        <div className="brand-mark"><Sparkles size={19} /></div>
         <span>工程师工作台</span>
       </div>
       <nav className="primary-nav">
