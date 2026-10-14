@@ -6,7 +6,6 @@ import {
   Bot,
   Check,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   CircleDot,
   Clock3,
@@ -25,6 +24,30 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { tickets } from "./data";
 import type { LogEntry, TaskDetail, Ticket, TicketStage } from "./types";
 
@@ -148,20 +171,20 @@ function Header({
   return (
     <header className="topbar">
       <div className="brand">
-        <button className="mobile-menu icon-button" onClick={onOpenList} aria-label="打开工单列表">
+        <Button variant="ghost" size="icon" className="mobile-menu icon-button" onClick={onOpenList} aria-label="打开工单列表">
           <ListFilter size={18} />
-        </button>
+        </Button>
         <span>工程师工作台</span>
       </div>
       <nav className="primary-nav">
-        <button className={`nav-item ${activeView === "mine" ? "active" : ""}`} onClick={() => onView("mine")}>我的任务 <b>4</b></button>
-        <button className={`nav-item ${activeView === "agent" ? "active" : ""}`} onClick={() => onView("agent")}>Agent 任务 <b>12</b></button>
+        <Button variant="ghost" className={`nav-item ${activeView === "mine" ? "active" : ""}`} onClick={() => onView("mine")}>我的任务 <b>4</b></Button>
+        <Button variant="ghost" className={`nav-item ${activeView === "agent" ? "active" : ""}`} onClick={() => onView("agent")}>Agent 任务 <b>12</b></Button>
       </nav>
       <div className="top-actions">
-        <button className="icon-button has-dot" aria-label="通知" title="通知"><Bell size={18} /></button>
-        <button className="icon-button" aria-label="待办" title="待办任务"><CheckCircle2 size={18} /></button>
-        <button className="icon-button ai-button" aria-label="Agent" title="Agent 状态" onClick={() => onView("agent")}><Bot size={18} /></button>
-        <button className="icon-button" aria-label="设置" title="设置"><Settings size={18} /></button>
+        <Button variant="ghost" size="icon" className="icon-button has-dot" aria-label="通知" title="通知"><Bell size={18} /></Button>
+        <Button variant="ghost" size="icon" className="icon-button" aria-label="待办" title="待办任务"><CheckCircle2 size={18} /></Button>
+        <Button variant="ghost" size="icon" className="icon-button ai-button" aria-label="Agent" title="Agent 状态" onClick={() => onView("agent")}><Bot size={18} /></Button>
+        <Button variant="ghost" size="icon" className="icon-button" aria-label="设置" title="设置"><Settings size={18} /></Button>
         <div className="avatar avatar-dark">GX</div>
       </div>
     </header>
@@ -193,41 +216,39 @@ function TicketSidebar(props: SidebarProps) {
             <p className="eyebrow">INBOX</p>
             <h2>我的工单</h2>
           </div>
-          <span className="count-badge">{props.tickets.length}</span>
-          <button className="mobile-close icon-button" onClick={props.onClose} aria-label="关闭"><X size={18} /></button>
+          <Badge variant="secondary" className="count-badge">{props.tickets.length}</Badge>
+          <Button variant="ghost" size="icon" className="mobile-close icon-button" onClick={props.onClose} aria-label="关闭"><X size={18} /></Button>
         </div>
         <div className="filters">
           <div className="filter-row">
-            <label>
-              <select value={props.severity} onChange={(event) => props.setSeverity(event.target.value)}>
-                <option>全部状态</option>
-                <option>P0</option>
-                <option>P1</option>
-                <option>P2</option>
-              </select>
-              <ChevronDown size={14} />
-            </label>
-            <label>
-              <select value={props.type} onChange={(event) => props.setType(event.target.value)}>
-                {types.map((item) => <option key={item}>{item}</option>)}
-              </select>
-              <ChevronDown size={14} />
-            </label>
+            <Select value={props.severity} onValueChange={props.setSeverity}>
+              <SelectTrigger size="sm" className="filter-select" aria-label="状态筛选"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {["全部状态", "P0", "P1", "P2"].map((item) => <SelectItem value={item} key={item}>{item}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={props.type} onValueChange={props.setType}>
+              <SelectTrigger size="sm" className="filter-select" aria-label="类型筛选"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {types.map((item) => <SelectItem value={item} key={item}>{item}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div className="search-box">
             <Search size={15} />
-            <input value={props.search} onChange={(event) => props.setSearch(event.target.value)} placeholder="搜索工单编号或标题" />
+            <Input className="sidebar-search-input" value={props.search} onChange={(event) => props.setSearch(event.target.value)} placeholder="搜索工单编号或标题" />
           </div>
         </div>
         <div className="ticket-list">
           {props.tickets.map((item) => (
-            <button
+            <Button
+              variant="ghost"
               key={item.id}
               className={`ticket-card ${props.selectedId === item.id ? "selected" : ""}`}
               onClick={() => props.onSelect(item.id)}
             >
               <div className="ticket-meta">
-                <span className={`severity severity-${item.severity.toLowerCase()}`}>{item.severity}</span>
+                <Badge variant="outline" className={`severity severity-${item.severity.toLowerCase()}`}>{item.severity}</Badge>
                 <span>{item.id}</span>
                 <span className="ticket-time">{item.createdAt}</span>
               </div>
@@ -237,9 +258,9 @@ function TicketSidebar(props: SidebarProps) {
               </div>
               <div className="ticket-footer">
                 <span className="person"><i className="avatar">{item.initials}</i>{item.reporter}</span>
-                <span className="type-tag">{item.type}</span>
+                <Badge variant="secondary" className="type-tag">{item.type}</Badge>
               </div>
-            </button>
+            </Button>
           ))}
           {props.tickets.length === 0 && <div className="empty-state">未找到匹配工单</div>}
         </div>
@@ -271,15 +292,17 @@ function TicketHeader({
             <span><Users size={14} /> {ticket.reporter} 提交</span>
           </div>
         </div>
-        <span className={`status-pill ${stage}`}>
+        <Badge variant="outline" className={`status-pill ${stage}`}>
           <i /> {stage === "confirm" ? "等待确认发布" : "持续观察中"}
-        </span>
+        </Badge>
       </div>
-      <div className="tabs">
-        {["处理流程", "能力包", "完整记录"].map((tab) => (
-          <button key={tab} className={activeTab === tab ? "active" : ""} onClick={() => onTab(tab)}>{tab}</button>
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={onTab} className="ticket-tabs">
+        <TabsList variant="line" className="tabs">
+          {["处理流程", "能力包", "完整记录"].map((tab) => (
+            <TabsTrigger value={tab} key={tab}>{tab}</TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
     </section>
   );
 }
@@ -327,7 +350,7 @@ function FlowWorkspace({
   };
 
   return (
-    <section className="flow-section">
+    <Card className="flow-section">
       <div className="section-heading">
         <div>
           <p className="eyebrow">INCIDENT RUNBOOK</p>
@@ -357,7 +380,7 @@ function FlowWorkspace({
         <FlowConnector active={stage === "observing"} />
         <ObserveCard ticket={ticket} stage={stage} onClick={() => onTask(observeTask)} />
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -373,10 +396,10 @@ function FlowCard({
   onClick: () => void;
 }) {
   return (
-    <button className={`flow-card ${prominent ? "prominent" : ""}`} onClick={onClick}>
+    <Button variant="outline" className={`flow-card ${prominent ? "prominent" : ""}`} onClick={onClick}>
       <div className="flow-card-top">
         <span className="task-icon"><Icon size={15} /></span>
-        <span className="ai-tag"><Bot size={12} /> AI</span>
+        <Badge variant="secondary" className="ai-tag"><Bot size={12} /> AI</Badge>
       </div>
       <h3>{task.name}</h3>
       <p>{task.description}</p>
@@ -384,7 +407,7 @@ function FlowCard({
         <span className="done"><Check size={13} /> 已完成</span>
         <ChevronRight size={15} />
       </div>
-    </button>
+    </Button>
   );
 }
 
@@ -404,7 +427,7 @@ function HumanCard({
   onConfirm: () => void;
 }) {
   return (
-    <article
+    <Card
       className={`human-card ${stage === "observing" ? "completed" : ""}`}
       role="button"
       tabIndex={0}
@@ -413,7 +436,7 @@ function HumanCard({
     >
       <div className="flow-card-top">
         <span className="human-icon">{stage === "observing" ? <Check size={16} /> : <UserRound size={16} />}</span>
-        <span className="human-tag"><UserRound size={12} /> 人工</span>
+        <Badge variant="secondary" className="human-tag"><UserRound size={12} /> 人工</Badge>
       </div>
       <div className="human-title">
         <h3>协同方案并观察</h3>
@@ -429,20 +452,20 @@ function HumanCard({
         <div className="risk-row"><dt>风险提示</dt><dd>{ticket.risk}</dd></div>
       </dl>
       {stage === "confirm" ? (
-        <button className="primary-button" onClick={(event) => { event.stopPropagation(); onConfirm(); }}>确认发布 <ChevronRight size={16} /></button>
+        <Button className="primary-button" onClick={(event) => { event.stopPropagation(); onConfirm(); }}>确认发布 <ChevronRight size={16} /></Button>
       ) : (
-        <button className="completed-button" disabled><Check size={15} /> 已由工程师确认</button>
+        <Button variant="secondary" className="completed-button" disabled><Check size={15} /> 已由工程师确认</Button>
       )}
-    </article>
+    </Card>
   );
 }
 
 function ObserveCard({ ticket, stage, onClick }: { ticket: Ticket; stage: TicketStage; onClick: () => void }) {
   return (
-    <button className={`observe-card ${stage}`} onClick={onClick}>
+    <Button variant="outline" className={`observe-card ${stage}`} onClick={onClick}>
       <div className="flow-card-top">
         <span className="task-icon"><Activity size={15} /></span>
-        <span className="ai-tag"><Bot size={12} /> AI</span>
+        <Badge variant="secondary" className="ai-tag"><Bot size={12} /> AI</Badge>
       </div>
       <h3>影响范围、变更、日志持续观察</h3>
       <p>{stage === "observing" ? "正在采集实时指标并验证恢复效果" : "方案发布后自动启动监控"}</p>
@@ -450,36 +473,36 @@ function ObserveCard({ ticket, stage, onClick }: { ticket: Ticket; stage: Ticket
         {stage === "observing" ? <><span className="live-dot" /> 持续观察</> : <><Clock3 size={13} /> 等待启动</>}
       </div>
       {stage === "observing" && <strong>{ticket.metrics[1]?.value}</strong>}
-    </button>
+    </Button>
   );
 }
 
 function Observability({ ticket, tick }: { ticket: Ticket; tick: number }) {
   return (
-    <section className="observability">
+    <Card className="observability">
       <div className="section-heading compact">
         <div><p className="eyebrow">LIVE TELEMETRY</p><h2>持续观察</h2></div>
         <span className="live-label"><i /> 实时更新 · {tick + 1} 次采样</span>
       </div>
       <div className="metric-grid">
         {ticket.metrics.map((metric, index) => (
-          <article className="metric-card" key={metric.label}>
+          <Card className="metric-card" key={metric.label}>
             <div className="metric-top">
               <span>{metric.label}</span>
               <CircleDot size={14} className={`tone-${metric.tone}`} />
             </div>
             <strong>{index === 2 && tick > 0 ? `${Math.max(0.04, parseFloat(metric.value) - tick * 0.02).toFixed(2)}%` : metric.value}</strong>
             <small>{metric.trend}</small>
-          </article>
+          </Card>
         ))}
       </div>
-    </section>
+    </Card>
   );
 }
 
 function ActivityLog({ stage, entries, onConfirm }: { stage: TicketStage; entries: LogEntry[]; onConfirm: () => void }) {
   return (
-    <section className="activity-panel">
+    <Card className="activity-panel">
       <div className="activity-head">
         <div><p className="eyebrow">ACTIVITY</p><h2>操作记录</h2></div>
         <span>{stage === "confirm" ? "AI 已完成当前阶段 · 等待人工确认" : "方案已发布 · AI 正在持续观察"}</span>
@@ -498,11 +521,11 @@ function ActivityLog({ stage, entries, onConfirm }: { stage: TicketStage; entrie
         {stage === "confirm" && (
           <div className="next-action">
             <span>下一步需要工程师决策</span>
-            <button className="primary-button large" onClick={onConfirm}>确认发布 <ChevronRight size={17} /></button>
+            <Button className="primary-button large" onClick={onConfirm}>确认发布 <ChevronRight size={17} /></Button>
           </div>
         )}
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -525,26 +548,26 @@ function AgentTaskView({
           <h1>Agent 执行中心</h1>
           <p>查看当前工单的自动分析任务、执行证据与运行状态。</p>
         </div>
-        <button className="secondary-button" onClick={onBack}>返回处理流程</button>
+        <Button variant="outline" className="secondary-button" onClick={onBack}>返回处理流程</Button>
       </div>
-      <div className="agent-summary-strip">
+      <Card className="agent-summary-strip">
         <div><span>当前工单</span><strong>{ticket.id}</strong></div>
         <div><span>分析任务</span><strong>6</strong></div>
         <div><span>已完成</span><strong className="tone-good">6</strong></div>
         <div><span>持续观察</span><strong className={stage === "observing" ? "tone-good" : "tone-neutral"}>{stage === "observing" ? "运行中" : "待启动"}</strong></div>
-      </div>
-      <div className="agent-task-list">
+      </Card>
+      <Card className="agent-task-list">
         <div className="agent-list-head"><span>任务</span><span>输入源</span><span>耗时</span><span>状态</span><span /></div>
         {ticket.tasks.map((task) => (
-          <button className="agent-task-row" key={task.id} onClick={() => onTask(task)}>
+          <Button variant="ghost" className="agent-task-row" key={task.id} onClick={() => onTask(task)}>
             <span className="agent-task-name"><i><Bot size={15} /></i><span><strong>{task.name}</strong><small>{task.description}</small></span></span>
             <span>{task.input.length} 个数据源</span>
             <span>{task.duration}</span>
             <span className="done"><Check size={13} /> 已完成</span>
             <ChevronRight size={16} />
-          </button>
+          </Button>
         ))}
-      </div>
+      </Card>
     </section>
   );
 }
@@ -553,13 +576,12 @@ function TaskDrawer({ task, onClose }: { task: TaskDetail; onClose: () => void }
   const isHuman = task.actor === "human";
   const statusLabel = task.status === "running" ? "持续执行" : task.status === "waiting" ? "等待处理" : "已完成";
   return (
-    <>
-      <div className="drawer-scrim" onClick={onClose} />
-      <aside className="drawer">
+    <Sheet open onOpenChange={(open) => !open && onClose()}>
+      <SheetContent className="drawer" showCloseButton={false}>
         <div className="drawer-head">
           <div className={`drawer-icon ${isHuman ? "human" : ""}`}>{isHuman ? <UserRound size={19} /> : <Bot size={19} />}</div>
-          <div><span>{isHuman ? "人工决策详情" : "AI 执行详情"}</span><h2>{task.name}</h2></div>
-          <button className="icon-button" onClick={onClose} aria-label="关闭详情"><X size={19} /></button>
+          <div><span>{isHuman ? "人工决策详情" : "AI 执行详情"}</span><SheetTitle>{task.name}</SheetTitle></div>
+          <Button variant="ghost" size="icon" className="icon-button" onClick={onClose} aria-label="关闭详情"><X size={19} /></Button>
         </div>
         <div className="drawer-status">
           <span className={task.status === "waiting" ? "waiting" : "done"}>
@@ -579,10 +601,10 @@ function TaskDrawer({ task, onClose }: { task: TaskDetail; onClose: () => void }
           <div className="log-list">{task.logs.map((item, index) => <div key={item}><time>20:3{index}:0{index + 2}</time><span>{item}</span></div>)}</div>
         </DrawerSection>
         <DrawerSection title="相关证据">
-          {task.evidence.map((item) => <button className="evidence-row" key={item}><Database size={15} /> {item}<ChevronRight size={15} /></button>)}
+          {task.evidence.map((item) => <Button variant="ghost" className="evidence-row" key={item}><Database size={15} /> {item}<ChevronRight size={15} /></Button>)}
         </DrawerSection>
-      </aside>
-    </>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -592,13 +614,13 @@ function DrawerSection({ title, children }: { title: string; children: React.Rea
 
 function ConfirmModal({ ticket, onCancel, onConfirm }: { ticket: Ticket; onCancel: () => void; onConfirm: () => void }) {
   return (
-    <div className="modal-scrim" onMouseDown={(event) => event.target === event.currentTarget && onCancel()}>
-      <div className="modal" role="dialog" aria-modal="true">
-        <div className="modal-head">
+    <Dialog open onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="modal" showCloseButton={false}>
+        <DialogHeader className="modal-head">
           <span className="warning-icon"><AlertTriangle size={20} /></span>
-          <div><p>人工决策节点</p><h2>确认发布解决方案？</h2></div>
-          <button className="icon-button" onClick={onCancel} aria-label="关闭确认窗口"><X size={19} /></button>
-        </div>
+          <div><p>人工决策节点</p><DialogTitle>确认发布解决方案？</DialogTitle></div>
+          <Button variant="ghost" size="icon" className="icon-button" onClick={onCancel} aria-label="关闭确认窗口"><X size={19} /></Button>
+        </DialogHeader>
         <div className="modal-body">
           <div className="decision-summary">
             <label>推荐方案</label><p>{ticket.solution}</p>
@@ -614,12 +636,12 @@ function ConfirmModal({ ticket, onCancel, onConfirm }: { ticket: Ticket; onCance
             {ticket.solutionSteps.map((step, index) => <div key={step}><b>{index + 1}</b><span>{step}</span></div>)}
           </div>
         </div>
-        <div className="modal-actions">
-          <button className="secondary-button" onClick={onCancel}>取消</button>
-          <button className="primary-button" onClick={onConfirm}><Zap size={15} /> 确认发布</button>
-        </div>
-      </div>
-    </div>
+        <DialogFooter className="modal-actions">
+          <Button variant="outline" className="secondary-button" onClick={onCancel}>取消</Button>
+          <Button className="primary-button" onClick={onConfirm}><Zap size={15} /> 确认发布</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -631,18 +653,18 @@ function CapabilityView() {
     ["知识检索", "历史故障与运维知识库语义检索", FileSearch],
   ] as const;
   return (
-    <section className="placeholder-view">
+    <Card className="placeholder-view">
       <div className="section-heading"><div><p className="eyebrow">AGENT CAPABILITIES</p><h2>本工单启用的能力包</h2></div></div>
       <div className="capability-grid">
-        {items.map(([title, description, Icon]) => <article key={title}><Icon size={20} /><div><h3>{title}</h3><p>{description}</p></div><span>已启用</span></article>)}
+        {items.map(([title, description, Icon]) => <Card key={title}><Icon size={20} /><div><h3>{title}</h3><p>{description}</p></div><Badge variant="secondary">已启用</Badge></Card>)}
       </div>
-    </section>
+    </Card>
   );
 }
 
 function FullHistory({ entries, ticket }: { entries: LogEntry[]; ticket: Ticket }) {
   return (
-    <section className="placeholder-view">
+    <Card className="placeholder-view">
       <div className="section-heading"><div><p className="eyebrow">AUDIT TRAIL</p><h2>完整处理记录</h2></div></div>
       <div className="history-table">
         <div className="history-row header"><span>时间</span><span>执行方</span><span>动作</span><span>结果</span></div>
@@ -650,7 +672,7 @@ function FullHistory({ entries, ticket }: { entries: LogEntry[]; ticket: Ticket 
           <div className="history-row" key={`${entry.time}-${entry.title}`}><time>{entry.time}</time><span>{entry.type === "human" ? ticket.reporter : "Agent"}</span><strong>{entry.title}</strong><span>{entry.detail}</span></div>
         ))}
       </div>
-    </section>
+    </Card>
   );
 }
 
