@@ -33,10 +33,6 @@ button { color: inherit; }
   background: #fff; border-bottom: 1px solid #dfe4ea;
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 262px; font-size: 15px; font-weight: 700; }
-.brand-mark {
-  width: 30px; height: 30px; display: grid; place-items: center;
-  color: #fff; background: #172132; border-radius: 6px;
-}
 .primary-nav { align-self: stretch; display: flex; gap: 24px; }
 .nav-item {
   position: relative; border: 0; background: transparent; color: #657083;
